@@ -42,7 +42,7 @@ function parseCSV(csvText: string): CsvRow[] {
     }
     values.push(currentValue.trim())
 
-    const row: any = {}
+    const row: Record<string, string> = {}
     headers.forEach((header, index) => {
       row[header] = values[index] || ""
     })
@@ -75,7 +75,6 @@ async function uploadImageToSanity(imageUrl: string): Promise<any> {
       filename: imageUrl.split("/").pop() || "image.jpg",
     })
 
-    // Check if asset was successfully created
     if (!asset || !asset._id) {
       console.log(`[v0] Asset upload returned undefined or missing _id`)
       return null
@@ -123,10 +122,8 @@ export async function POST(request: NextRequest) {
 
         console.log(`[v0] Processing product: ${row.Name}`)
 
-        // Upload main image
         const mainImage = await uploadImageToSanity(row["Main Image"])
 
-        // Upload additional images
         const moreImagesUrls = row["More images"]?.split("|").filter((url) => url.trim()) || []
         const moreImages = []
         for (const url of moreImagesUrls) {
@@ -134,7 +131,6 @@ export async function POST(request: NextRequest) {
           if (img) moreImages.push(img)
         }
 
-        // Upload motif background
         const motifBackground = await uploadImageToSanity(row["Motif Background"])
 
         const product = {
@@ -159,7 +155,6 @@ export async function POST(request: NextRequest) {
         successCount++
         console.log(`[v0] Successfully imported: ${row.Name}`)
 
-        // Add a small delay to avoid rate limiting
         await new Promise((resolve) => setTimeout(resolve, 500))
       } catch (error) {
         const errorMsg = `Error importing ${row.Name}: ${error instanceof Error ? error.message : "Unknown error"}`
@@ -175,7 +170,7 @@ export async function POST(request: NextRequest) {
       message: `Successfully imported ${successCount} products${errorCount > 0 ? ` (${errorCount} errors)` : ""}`,
       count: successCount,
       errors: errorCount,
-      errorDetails: errors.slice(0, 5), // Return first 5 errors
+      errorDetails: errors.slice(0, 5),
     })
   } catch (error) {
     console.error("[v0] Critical import error:", error)
