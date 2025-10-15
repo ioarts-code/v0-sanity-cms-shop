@@ -1,0 +1,190 @@
+import { type NextRequest, NextResponse } from "next/server"
+import { sanityClient } from "@/lib/sanity"
+
+interface CsvRow {
+  Name: string
+  Slug: string
+  "Post Summary": string
+  Description: string
+  "Main Image": string
+  "Featured?": string
+  "More images": string
+  Categories: string
+  "Motif Background Color": string
+  "Motif Background": string
+}
+
+function parseCSV(csvText: string): CsvRow[] {
+  const lines = csvText.split("\n")
+  const headers = lines[0].split(",").map((h) => h.trim().replace(/^"|"$/g, ""))
+
+  const rows: CsvRow[] = []
+
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i].trim()
+    if (!line) continue
+
+    const values: string[] = []
+    let currentValue = ""
+    let insideQuotes = false
+
+    for (let j = 0; j < line.length; j++) {
+      const char = line[j]
+
+      if (char === '"') {
+        insideQuotes = !insideQuotes
+      } else if (char === "," && !insideQuotes) {
+        values.push(currentValue.trim())
+        currentValue = ""
+      } else {
+        currentValue += char
+      }
+    }
+    values.push(currentValue.trim())
+
+    const row: any = {}
+    headers.forEach((header, index) => {
+      row[header] = values[index] || ""
+    })
+    rows.push(row as CsvRow)
+  }
+
+  return rows
+}
+
+async function uploadImageToSanity(imageUrl: string): Promise<any> {
+  if (!imageUrl || imageUrl === "") return null
+
+  try {
+    console.log(`[v0] Attempting to upload image: ${imageUrl}`)
+
+    const response = await fetch(imageUrl)
+    if (!response.ok) {
+      console.log(`[v0] Failed to fetch image: ${response.status} ${response.statusText}`)
+      return null
+    }
+
+    const buffer = await response.arrayBuffer()
+
+    if (!buffer || buffer.byteLength === 0) {
+      console.log(`[v0] Image buffer is empty`)
+      return null
+    }
+
+    const asset = await sanityClient.assets.upload("image", Buffer.from(buffer), {
+      filename: imageUrl.split("/").pop() || "image.jpg",
+    })
+
+    // Check if asset was successfully created
+    if (!asset || !asset._id) {
+      console.log(`[v0] Asset upload returned undefined or missing _id`)
+      return null
+    }
+
+    console.log(`[v0] Successfully uploaded image with ID: ${asset._id}`)
+
+    return {
+      _type: "image",
+      asset: {
+        _type: "reference",
+        _ref: asset._id,
+      },
+    }
+  } catch (error) {
+    console.error("[v0] Error uploading image:", imageUrl, error)
+    return null
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const { csvData } = body
+
+    if (!csvData) {
+      return NextResponse.json({ error: "No CSV data provided" }, { status: 400 })
+    }
+
+    console.log("[v0] Starting CSV import...")
+
+    const rows = parseCSV(csvData)
+    console.log(`[v0] Parsed ${rows.length} rows from CSV`)
+
+    let successCount = 0
+    let errorCount = 0
+    const errors: string[] = []
+
+    for (const row of rows) {
+      try {
+        if (!row.Name || !row.Slug) {
+          console.log("[v0] Skipping row - missing name or slug")
+          continue
+        }
+
+        console.log(`[v0] Processing product: ${row.Name}`)
+
+        // Upload main image
+        const mainImage = await uploadImageToSanity(row["Main Image"])
+
+        // Upload additional images
+        const moreImagesUrls = row["More images"]?.split("|").filter((url) => url.trim()) || []
+        const moreImages = []
+        for (const url of moreImagesUrls) {
+          const img = await uploadImageToSanity(url.trim())
+          if (img) moreImages.push(img)
+        }
+
+        // Upload motif background
+        const motifBackground = await uploadImageToSanity(row["Motif Background"])
+
+        const product = {
+          _type: "product",
+          name: row.Name,
+          slug: {
+            _type: "slug",
+            current: row.Slug,
+          },
+          description: row["Post Summary"] || row.Description || "",
+          price: 0,
+          ...(mainImage && { image: mainImage }),
+          ...(moreImages.length > 0 && { moreImages }),
+          category: row.Categories || "",
+          featured: row["Featured?"]?.toLowerCase() === "true",
+          motifBackgroundColor: row["Motif Background Color"] || "",
+          ...(motifBackground && { motifBackground }),
+          inStock: true,
+        }
+
+        await sanityClient.create(product)
+        successCount++
+        console.log(`[v0] Successfully imported: ${row.Name}`)
+
+        // Add a small delay to avoid rate limiting
+        await new Promise((resolve) => setTimeout(resolve, 500))
+      } catch (error) {
+        const errorMsg = `Error importing ${row.Name}: ${error instanceof Error ? error.message : "Unknown error"}`
+        console.error(`[v0] ${errorMsg}`)
+        errors.push(errorMsg)
+        errorCount++
+      }
+    }
+
+    console.log(`[v0] Import complete. Success: ${successCount}, Errors: ${errorCount}`)
+
+    return NextResponse.json({
+      message: `Successfully imported ${successCount} products${errorCount > 0 ? ` (${errorCount} errors)` : ""}`,
+      count: successCount,
+      errors: errorCount,
+      errorDetails: errors.slice(0, 5), // Return first 5 errors
+    })
+  } catch (error) {
+    console.error("[v0] Critical import error:", error)
+    return NextResponse.json(
+      {
+        error: "Failed to import CSV",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 },
+    )
+  }
+}
