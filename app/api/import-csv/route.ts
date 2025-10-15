@@ -14,6 +14,14 @@ interface CsvRow {
   "Motif Background": string
 }
 
+interface SanityImageAsset {
+  _type: string
+  asset: {
+    _type: string
+    _ref: string
+  }
+}
+
 function parseCSV(csvText: string): CsvRow[] {
   const lines = csvText.split("\n")
   const headers = lines[0].split(",").map((h) => h.trim().replace(/^"|"$/g, ""))
@@ -52,7 +60,7 @@ function parseCSV(csvText: string): CsvRow[] {
   return rows
 }
 
-async function uploadImageToSanity(imageUrl: string): Promise<any> {
+async function uploadImageToSanity(imageUrl: string): Promise<SanityImageAsset | null> {
   if (!imageUrl || imageUrl === "") return null
 
   try {
@@ -125,7 +133,7 @@ export async function POST(request: NextRequest) {
         const mainImage = await uploadImageToSanity(row["Main Image"])
 
         const moreImagesUrls = row["More images"]?.split("|").filter((url) => url.trim()) || []
-        const moreImages = []
+        const moreImages: SanityImageAsset[] = []
         for (const url of moreImagesUrls) {
           const img = await uploadImageToSanity(url.trim())
           if (img) moreImages.push(img)
