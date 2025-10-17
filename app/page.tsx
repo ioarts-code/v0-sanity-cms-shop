@@ -78,7 +78,7 @@ export default async function HomePage() {
                       <img
                         src={urlFor(product.image).width(400).height(400).url() || "/placeholder.svg"}
                         alt={product.name}
-                        className="object-cover w-full h-full"
+                        className="object-cover w-full h-full bg-[rgba(255,255,255,1)]"
                       />
                     ) : (
                       <div className="flex items-center justify-center h-full text-muted-foreground">No Image</div>
