@@ -33,18 +33,24 @@ export function ProductList({ products }: ProductListProps) {
 
     setIsDeleting(true)
     try {
+      console.log("[v0] Attempting to delete product:", deleteId)
+
       const response = await fetch(`/api/products/${deleteId}`, {
         method: "DELETE",
       })
 
       if (response.ok) {
+        console.log("[v0] Product deleted successfully")
         setDeleteId(null)
         router.refresh()
       } else {
-        console.error("[v0] Failed to delete product")
+        const errorData = await response.json().catch(() => ({ error: "Unknown error" }))
+        console.error("[v0] Failed to delete product:", errorData)
+        alert(`Failed to delete product: ${errorData.error || "Unknown error"}`)
       }
     } catch (error) {
       console.error("[v0] Error deleting product:", error)
+      alert("An error occurred while deleting the product. Please try again.")
     } finally {
       setIsDeleting(false)
     }

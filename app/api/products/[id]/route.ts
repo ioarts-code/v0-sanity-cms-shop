@@ -1,8 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { sanityClient } from "@/lib/sanity"
 
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params
     const body = await request.json()
     const { name, price, description, category, inStock, imageUrl } = body
 
@@ -34,7 +35,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       }
     }
 
-    const result = await sanityClient.patch(params.id).set(updateData).commit()
+    const result = await sanityClient.patch(id).set(updateData).commit()
 
     return NextResponse.json(result)
   } catch (error) {
@@ -43,9 +44,14 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    await sanityClient.delete(params.id)
+    const { id } = await params
+    console.log("[v0] Deleting product with ID:", id)
+
+    await sanityClient.delete(id)
+
+    console.log("[v0] Product deleted successfully")
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error("[v0] Error deleting product:", error)
