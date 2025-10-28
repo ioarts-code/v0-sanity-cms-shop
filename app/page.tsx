@@ -28,16 +28,16 @@ export default async function HomePage() {
   const products = await getProducts()
 
   return (
-    <div className="min-h-screen bg-sidebar-accent">
+    <div className="min-h-screen bg-[rgba(255,255,255,1)]">
       {/* Header */}
       <SiteHeader />
 
       {/* Hero Section */}
-      <section className="border-b border-border/40 bg-sidebar-accent">
-        <div className="container mx-auto px-4 py-24 text-center">
-          <h1 className="text-6xl font-bold tracking-tight text-balance mb-6 leading-tight">Sanity CMS</h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto text-pretty leading-relaxed">
-            Detta är ett rent tema som jag modifierat i V0 för att använda Sanity som CMS. Nextjs är grunden.
+      <section className="border-b border-border/40 bg-[rgba(255,255,255,1)]">
+        <div className="container mx-auto px-4 py-24 text-center bg-[rgba(39,39,39,1)]">
+          <h1 className="text-6xl font-bold tracking-tight text-balance mb-6 leading-tight text-[rgba(171,171,171,1)]">Sanity CMS</h1>
+          <p className="text-xl max-w-2xl mx-auto text-pretty leading-relaxed text-[rgba(148,148,148,1)]">
+            Detta är ett grundtema som jag modifierat i V0 för att använda Sanity som CMS. Nextjs är grunden.
           </p>
         </div>
       </section>
@@ -61,7 +61,7 @@ export default async function HomePage() {
                       <img
                         src={urlFor(product.image).width(500).height(500).url() || "/placeholder.svg"}
                         alt={product.name}
-                        className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+                        className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105 bg-background"
                       />
                     ) : (
                       <div className="flex items-center justify-center h-full text-muted-foreground">No Image</div>

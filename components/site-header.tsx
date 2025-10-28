@@ -10,14 +10,14 @@ export function SiteHeader() {
 
   return (
     <header className="border-b border-border/40 bg-card sticky top-0 z-50">
-      <div className="container mx-auto flex items-center justify-between px-4 py-6">
+      <div className="container mx-auto flex items-center justify-between px-4 py-6 bg-transparent">
         <Link href="/" className="flex items-center gap-2">
           <ShoppingBag className="h-6 w-6" />
           <span className="text-xl font-semibold">Shop</span>
         </Link>
         <nav className="flex items-center gap-6">
           <Link href="/" className="text-sm hover:text-primary transition-colors">
-            Products
+            Storefront
           </Link>
           <Link href="/admin" className="text-sm hover:text-primary transition-colors">
             Admin

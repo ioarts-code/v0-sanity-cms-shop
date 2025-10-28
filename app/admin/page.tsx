@@ -22,7 +22,7 @@ async function getProducts(): Promise<Product[]> {
     const products = await sanityClient.fetch(query)
     return products
   } catch (error) {
-    console.error("[v0] Error fetching products:", error)
+    console.error("Error fetching products:", error)
     return []
   }
 }
@@ -35,9 +35,8 @@ export default async function AdminPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border bg-card">
-        <div className="container mx-auto flex items-center justify-between px-4 py-6">
+      <header className="border-b">
+        <div className="flex items-center justify-between px-4 py-6">
           <Link href="/" className="flex items-center gap-2">
             <ShoppingBag className="h-6 w-6" />
             <span className="text-xl font-semibold">Shop Admin</span>
@@ -54,7 +53,6 @@ export default async function AdminPage() {
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        {/* Page Title */}
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold tracking-tight mb-2">Product Management</h1>
@@ -62,16 +60,15 @@ export default async function AdminPage() {
           </div>
           <div className="flex items-center gap-3">
             <CsvImport />
-            <Button asChild size="lg">
-              <Link href="/admin/products/new">
+            <Link href="/admin/products/new">
+              <Button size="lg">
                 <Plus className="h-4 w-4 mr-2" />
                 Add Product
-              </Link>
-            </Button>
+              </Button>
+            </Link>
           </div>
         </div>
 
-        {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -109,7 +106,6 @@ export default async function AdminPage() {
           </Card>
         </div>
 
-        {/* Products Table */}
         <Card>
           <CardHeader>
             <CardTitle>All Products</CardTitle>

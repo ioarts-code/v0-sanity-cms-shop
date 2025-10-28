@@ -58,7 +58,6 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <SiteHeader />
 
       {/* Product Detail */}
