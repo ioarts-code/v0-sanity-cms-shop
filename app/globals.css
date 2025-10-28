@@ -37,6 +37,9 @@
   --sidebar-accent-foreground: oklch(0.15 0.01 106);
   --sidebar-border: oklch(0.9 0.01 106);
   --sidebar-ring: oklch(0.15 0.01 106);
+  /* Added brand color tokens */
+  --brand: oklch(0.35 0.08 280);
+  --brand-foreground: oklch(0.99 0.005 106);
 }
 
 .dark {
@@ -72,10 +75,15 @@
   --sidebar-accent-foreground: oklch(0.99 0.005 106);
   --sidebar-border: oklch(0.25 0.01 106);
   --sidebar-ring: oklch(0.65 0.01 106);
+  /* Added brand color tokens for dark mode */
+  --brand: oklch(0.45 0.1 280);
+  --brand-foreground: oklch(0.99 0.005 106);
 }
 
 @theme inline {
+  /* Added Playfair Display serif font */
   --font-sans: var(--font-geist-sans);
+  --font-serif: var(--font-playfair);
   --font-mono: var(--font-geist-mono);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -113,6 +121,9 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  /* Added brand color tokens to theme */
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
 }
 
 @layer base {
