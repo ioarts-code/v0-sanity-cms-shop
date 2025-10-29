@@ -1,6 +1,6 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Geist, Geist_Mono, Playfair_Display } from "next/font/google"
+import { Geist, Geist_Mono, Playfair_Display, Sedgwick_Ave_Display } from "next/font/google"
 import "./globals.css"
 import { CartProvider } from "@/lib/cart"
 import { Toaster } from "@/components/ui/toaster"
@@ -20,6 +20,12 @@ const playfair = Playfair_Display({
   variable: "--font-playfair",
 })
 
+const sedgwickAve = Sedgwick_Ave_Display({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-sedgwick",
+})
+
 export const metadata: Metadata = {
   title: "Sanity CMS Shop",
   description: "A modern e-commerce shop powered by Sanity CMS",
@@ -33,7 +39,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} antialiased`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} ${sedgwickAve.variable} antialiased`}
+      >
         <CartProvider>
           {children}
           <Toaster />

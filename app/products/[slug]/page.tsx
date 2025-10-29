@@ -46,8 +46,8 @@ async function getRelatedProducts(category: string | undefined, currentId: strin
   }
 }
 
-export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params
+export default async function ProductPage({ params }: { params: { slug: string } }) {
+  const { slug } = params
   const product = await getProduct(slug)
 
   if (!product) {
@@ -78,14 +78,11 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
           {/* Product Info */}
           <div className="flex flex-col justify-center space-y-8">
+            <h1 className="text-4xl md:text-5xl font-bold text-balance leading-tight">{product.name}</h1>
+
             {product.category && (
               <p className="text-sm font-medium tracking-wider uppercase text-muted-foreground">{product.category}</p>
             )}
-
-            <div className="space-y-4">
-              <h1 className="text-5xl font-bold tracking-tight text-balance leading-tight">{product.name}</h1>
-              <p className="text-4xl font-semibold">${product.price.toFixed(2)}</p>
-            </div>
 
             {product.description && (
               <p className="text-lg text-muted-foreground leading-relaxed text-pretty max-w-prose">
@@ -130,7 +127,6 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                     <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">
                       {relatedProduct.name}
                     </h3>
-                    <p className="text-muted-foreground">${relatedProduct.price.toFixed(2)}</p>
                   </div>
                 </Link>
               ))}

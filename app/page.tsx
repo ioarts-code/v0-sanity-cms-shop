@@ -35,7 +35,9 @@ export default async function HomePage() {
       {/* Hero Section */}
       <section className="border-b border-border/40 bg-[rgba(255,255,255,1)]">
         <div className="container mx-auto px-4 py-24 text-center bg-[rgba(39,39,39,1)]">
-          <h1 className="text-6xl font-bold tracking-tight text-balance mb-6 leading-tight text-[rgba(171,171,171,1)]">Sanity CMS</h1>
+          <h1 className="text-6xl font-bold text-balance mb-6 leading-tight text-[rgba(171,171,171,1)] font-display tracking-wider">
+            Sanity CMS
+          </h1>
           <p className="text-xl max-w-2xl mx-auto text-pretty leading-relaxed text-[rgba(148,148,148,1)]">
             Detta är ett grundtema som jag modifierat i V0 för att använda Sanity som CMS. Nextjs är grunden.
           </p>
@@ -76,7 +78,6 @@ export default async function HomePage() {
                     <h3 className="font-semibold text-lg group-hover:text-primary transition-colors text-balance">
                       {product.name}
                     </h3>
-                    <p className="text-xl font-semibold">${product.price.toFixed(2)}</p>
                   </div>
                 </div>
               </Link>

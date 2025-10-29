@@ -57,7 +57,6 @@ export default function CartPage() {
                     <Link href={`/products/${item.slug}`} className="hover:text-primary">
                       <h3 className="font-semibold text-lg">{item.name}</h3>
                     </Link>
-                    <p className="text-muted-foreground">${item.price.toFixed(2)}</p>
                     <div className="flex items-center gap-2">
                       <Button variant="outline" size="sm" onClick={() => updateQuantity(item._id, item.quantity - 1)}>
                         <Minus className="h-4 w-4" />
@@ -72,7 +71,6 @@ export default function CartPage() {
                     <Button variant="ghost" size="sm" onClick={() => removeItem(item._id)}>
                       <Trash2 className="h-4 w-4 text-destructive" />
                     </Button>
-                    <p className="font-semibold text-lg">${(item.price * item.quantity).toFixed(2)}</p>
                   </div>
                 </div>
               </Card>
@@ -81,10 +79,6 @@ export default function CartPage() {
 
           <Card className="p-6">
             <div className="space-y-4">
-              <div className="flex items-center justify-between text-lg">
-                <span className="font-medium">Subtotal</span>
-                <span className="font-bold">${totalPrice.toFixed(2)}</span>
-              </div>
               <Button size="lg" className="w-full">
                 Proceed to Checkout
               </Button>
