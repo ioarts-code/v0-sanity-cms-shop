@@ -34,7 +34,7 @@ export default async function HomePage() {
 
       {/* Hero Section */}
       <section className="border-b border-border/40 bg-[rgba(255,255,255,1)]">
-        <div className="container mx-auto px-4 py-24 text-center bg-[rgba(39,39,39,1)]">
+        <div className="container mx-auto px-4 py-24 text-center bg-zinc-100">
           <h1 className="text-6xl font-bold text-balance mb-6 leading-tight text-[rgba(171,171,171,1)] font-display tracking-wider">
             Sanity CMS
           </h1>
